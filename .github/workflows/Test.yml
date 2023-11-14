@@ -1,0 +1,56 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+
+    - name: Install Composer Dependencies
+      run: |
+        curl -sS https://getcomposer.org/installer | php
+        php composer.phar install
+
+    - name: Copy .env file
+      run: cp .env.example .env
+
+    - name: Generate Application Key
+      run: php artisan key:generate
+
+    - name: Start Laravel Sail
+      run: make up-wait
+
+    - name: Run Migrations
+      run: make migrate
+
+    - name: Run NPM Install
+      run: make npm-install
+
+    - name: Run Vite Build
+      run: make vite-build
+
+    - name: Run Tests
+      run: make test
+
+    - name: Run Static Analysis
+      run: make stan
+
+    - name: Run Lint
+      run: make lint
