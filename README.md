@@ -79,3 +79,15 @@ There are a few other common commands that the makefile supports.
 
 Also note that Sail is available for any other commands you might need.
 - `./vendor/bin/sail artisan list`
+
+
+## Things I’d Like to Add Given More Time
+
+- `SchoolDataProvider` should have shaped return types. A few DTOs would likely clean this up a lot.
+- Employee Permissions via Policies.
+    - Maybe teachers could only view limited data for classes they aren't the primary teacher for.
+- More FE features
+    - View Lessons
+    - Student Statuses
+
+If I had much more time, I think the main approach I'd take would be to disconnect the frontend from Laravel and turn Laravel into an API service. Then maybe a frontend built with Next.js to complement the API.
