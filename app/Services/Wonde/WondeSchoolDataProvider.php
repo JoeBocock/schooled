@@ -38,13 +38,10 @@ class WondeSchoolDataProvider implements SchoolDataProvider
     public function getClassWithStudents(string $id, string $employeeId = null): array
     {
         if ($employeeId) {
-            if (! $classes = $this->getEmployeeClasses($employeeId)) {
-                return [];
-            }
-
-            $classes = collect($classes)->filter(
-                fn ($class) => $class['id'] === $id
-            );
+            $classes = collect($this->getEmployeeClasses($employeeId))
+                ->filter(
+                    fn ($class) => $class['id'] === $id
+                );
 
             if ($classes->count() === 0) {
                 return [];
