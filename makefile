@@ -49,3 +49,7 @@ format:
 .PHONY: lint
 lint:
 	$(call command, bin, php-cs-fixer fix --dry-run)
+
+.PHONY: seed
+seed:
+	$(call command, artisan, db:seed)

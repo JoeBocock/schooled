@@ -66,7 +66,17 @@ make vite-build
 
 <br>
 
-Finally, you should set you environment variables. See `{provider}_KEY` & `{provider}_SCHOOL_ID`
+Optionally, you may seed the database with a test user.
+```sh
+# test@example.com & password
+make seed
+```
+
+<br>
+
+Finally, you should set your environment variables. See `{provider}_KEY` & `{provider}_SCHOOL_ID`.
+
+Once you've completed the above steps, you should now have the Sail stack available locally and Schooled should be running on `localhost`. If you need to verify your email after registration, you may access `Mailpit` at `localhost:8025`.
 
 ## Extra Commands
 
@@ -83,7 +93,7 @@ Also note that Sail is available for any other commands you might need.
 
 ## Things I’d Like to Add Given More Time
 
-- `SchoolDataProvider` should have shaped return types. A few DTOs would likely clean this up a lot.
+- `SchoolDataProvider` should have shaped return types. A few DTOs would clean this up a lot.
 - Employee Permissions via Policies.
     - Maybe teachers could only view limited data for classes they aren't the primary teacher for.
 - More FE features
