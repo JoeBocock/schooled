@@ -27,7 +27,7 @@ class WondeSchoolDataProvider implements SchoolDataProvider
     {
         return $this->fetch(
             fn () => $this->client->school($this->schoolId)->employees->get($id)
-        ) ?? [];
+        );
     }
 
     public function getEmployeeClasses(string $id): array
@@ -59,7 +59,7 @@ class WondeSchoolDataProvider implements SchoolDataProvider
             fn () => $this->client->school($this->schoolId)->classes->get($id, ['students'])
         );
 
-        return $response ?? [];
+        return $response;
     }
 
     private function fetch(callable $operation): array

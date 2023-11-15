@@ -1,5 +1,7 @@
 command = ./vendor/bin/sail $(1) $(2)
 
+composer = @docker run --rm --interactive --tty --volume `pwd`:/app composer:2.6.5 install
+
 .PHONY: up
 up:
 	$(call command, up -d)
@@ -15,6 +17,10 @@ down:
 .PHONY: migrate
 migrate:
 	$(call command, artisan, migrate)
+
+.PHONY: install
+install:
+	$(call composer)
 
 .PHONY: npm-install
 npm-install:
