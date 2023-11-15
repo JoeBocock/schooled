@@ -26,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
             return new WondeSchoolDataProvider(
                 $app->make(Client::class),
                 $app->make(LoggerInterface::class),
+                config('services.wonde.school')
             );
         });
     }

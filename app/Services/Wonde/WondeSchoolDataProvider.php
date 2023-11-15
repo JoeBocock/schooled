@@ -12,12 +12,8 @@ use Wonde\Client;
 // TODO: DTO to normalize public function responses.
 class WondeSchoolDataProvider implements SchoolDataProvider
 {
-    private string $schoolId;
-
-    public function __construct(private Client $client, private LoggerInterface $logger)
+    public function __construct(private Client $client, private LoggerInterface $logger, private string $schoolId)
     {
-        $this->schoolId = config('services.wonde.school');
-
         $this->logger->debug('wonde-school-data-provider-constructed', [
             'school_id' => $this->schoolId,
         ]);
