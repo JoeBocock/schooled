@@ -22,6 +22,10 @@ migrate:
 install:
 	$(call composer)
 
+.PHONY: key
+key:
+	$(call command, artisan, key:generate)
+
 .PHONY: npm-install
 npm-install:
 	$(call command, npm, install)

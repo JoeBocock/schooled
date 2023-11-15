@@ -18,24 +18,17 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.2'
-
-    - name: Install Composer Dependencies
-      run: |
-        curl -sS https://getcomposer.org/installer | php
-        php composer.phar install
+    - name: Install Composer Deps
+      run: make install
 
     - name: Copy .env file
       run: cp .env.example .env
 
-    - name: Generate Application Key
-      run: php artisan key:generate
-
     - name: Start Laravel Sail
       run: make up-wait
+
+    - name: Generate Application Key
+      run: make key
 
     - name: Run Migrations
       run: make migrate
