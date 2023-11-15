@@ -4,13 +4,25 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Contracts\SchoolDataProvider;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery\MockInterface;
 use Tests\TestCase;
 
 class ProfileTest extends TestCase
 {
     use RefreshDatabase;
+
+    private function mockSchoolDataProvider(): void
+    {
+        $this->instance(
+            SchoolDataProvider::class,
+            \Mockery::mock(SchoolDataProvider::class, function (MockInterface $mock) {
+                $mock->shouldReceive('getEmployee')->andReturn(['some' => 'data']);
+            })
+        );
+    }
 
     public function test_profile_page_is_displayed(): void
     {
@@ -25,11 +37,14 @@ class ProfileTest extends TestCase
 
     public function test_profile_information_can_be_updated(): void
     {
+        $this->mockSchoolDataProvider();
+
         $user = User::factory()->create();
 
         $response = $this
             ->actingAs($user)
             ->patch('/profile', [
+                'provider_id' => '1ABC',
                 'name' => 'Test User',
                 'email' => 'test@example.com',
             ]);
@@ -47,11 +62,14 @@ class ProfileTest extends TestCase
 
     public function test_email_verification_status_is_unchanged_when_the_email_address_is_unchanged(): void
     {
+        $this->mockSchoolDataProvider();
+
         $user = User::factory()->create();
 
         $response = $this
             ->actingAs($user)
             ->patch('/profile', [
+                'provider_id' => '1ABC',
                 'name' => 'Test User',
                 'email' => $user->email,
             ]);

@@ -9,6 +9,7 @@ use GuzzleHttp\Exception\ClientException;
 use Psr\Log\LoggerInterface;
 use Wonde\Client;
 
+// TODO: DTO to normalize public function responses.
 class WondeSchoolDataProvider implements SchoolDataProvider
 {
     private string $schoolId;
@@ -22,57 +23,65 @@ class WondeSchoolDataProvider implements SchoolDataProvider
         ]);
     }
 
-    public function getEmployee(string $id): array|null
+    public function getEmployee(string $id): array
     {
-        return $this->fetchEmployee($id);
+        return $this->fetch(
+            fn () => $this->client->school($this->schoolId)->employees->get($id)
+        ) ?? [];
     }
 
-    public function getClassesForEmployee(string $id): array|null
+    public function getEmployeeClasses(string $id): array
     {
-        $employee = $this->fetchEmployee($id, ['classes']);
+        $response = $this->fetch(
+            fn () => $this->client->school($this->schoolId)->employees->get($id, ['classes'])
+        );
 
-        // TODO: Class DTO to normalise the response.
-        return $employee && isset($employee['classes'])
-            ? $employee['classes']['data']
-            : null;
+        return isset($response['classes']) ? $response['classes']['data'] : [];
     }
 
-    public function getStudentsForClass(string $id): array|null
+    public function getClassWithStudents(string $id, string $employeeId = null): array
     {
-        $employee = $this->fetchEmployee($id, ['classes']);
+        if ($employeeId) {
+            if (! $classes = $this->getEmployeeClasses($employeeId)) {
+                return [];
+            }
 
-        // TODO: Class DTO to normalise the response.
-        return $employee && isset($employee['classes'])
-            ? $employee['classes']['data']
-            : null;
+            $classes = collect($classes)->filter(
+                fn ($class) => $class['id'] === $id
+            );
+
+            if ($classes->count() === 0) {
+                return [];
+            }
+        }
+
+        $response = $this->fetch(
+            fn () => $this->client->school($this->schoolId)->classes->get($id, ['students'])
+        );
+
+        return $response ?? [];
     }
 
-    private function fetchEmployee(string $id, array $includes = []): array|null
+    private function fetch(callable $operation): array
     {
-        $employee = null;
-
-        $this->logger->debug('wonde-school-data-provider-fetch-employee', [
-            'id' => $id,
-            'includes' => $includes,
-        ]);
+        $response = [];
 
         try {
-            $employee = $this->client->school($this->schoolId)->employees->get($id, $includes);
+            $response = $operation();
         } catch (ClientException $e) {
             $this->logger->info(
-                'wonde-school-data-provider-get-employee-4xx',
+                'wonde-school-data-provider-fetch-4xx',
                 ['exception' => $e]
             );
         } catch (\Throwable $th) {
             $this->logger->error(
-                'wonde-school-data-provider-get-employee-failure',
+                'wonde-school-data-provider-fetch-failure',
                 ['exception' => $th]
             );
         }
 
-        // TODO: Employee DTO to normalise the response.
-        return $employee
-            ? json_decode(json_encode($employee), true)
-            : null;
+        return $response
+            ? json_decode(json_encode($response), true)
+            : [];
     }
 }

@@ -18,8 +18,14 @@
         @method('patch')
 
         <div>
+            <x-input-label for="provider_id" :value="__('Identifier')" />
+            <x-text-input id="provider_id" name="provider_id" type="text" class="mt-1 block w-full" :value="old('provider_id', $user->provider_id)" required autofocus />
+            <x-input-error class="mt-2" :messages="$errors->get('provider_id')" />
+        </div>
+
+        <div>
             <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
+            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autocomplete="name" />
             <x-input-error class="mt-2" :messages="$errors->get('name')" />
         </div>
 
