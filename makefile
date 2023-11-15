@@ -1,6 +1,6 @@
 command = ./vendor/bin/sail $(1) $(2)
 
-composer = @docker run --rm --interactive -t --volume `pwd`:/app composer:2.6.5 install
+composer = @docker run --rm -t --volume `pwd`:/app composer:2.6.5 install
 
 .PHONY: up
 up:
